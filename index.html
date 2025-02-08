@@ -16,8 +16,15 @@
             margin: 20px;
         }
 
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
         .form-group {
             margin-bottom: 15px;
+            flex: 1 1 48%;
         }
 
         .form-group label {
@@ -105,6 +112,10 @@
         }
 
         @media screen and (max-width: 768px) {
+            .form-group {
+                flex: 1 1 100%;
+            }
+
             .imagem-container {
                 max-width: 100%;
             }
@@ -113,288 +124,454 @@
                 width: 100%;
             }
         }
+
+        /* Alinhamento dos botões de gravação */
+        .audio-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .audio-buttons button {
+            width: 48%;
+        }
     </style>
 </head>
 <body>
 
     <div id="formClienteTecnico">
         <h2>Informações do Cliente e Técnico</h2>
-        <div class="form-group">
-            <label for="nomeCliente">Nome do Cliente:</label>
-            <input type="text" id="nomeCliente" class="input-campo" placeholder="Nome do Cliente">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nomeCliente">Nome do Cliente:</label>
+                <input type="text" id="nomeCliente" class="input-campo" placeholder="Nome do Cliente">
+            </div>
+            <div class="form-group">
+                <label for="nomeTecnico">Nome do Técnico:</label>
+                <input type="text" id="nomeTecnico" class="input-campo" placeholder="Nome do Técnico">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="nomeTecnico">Nome do Técnico:</label>
-            <input type="text" id="nomeTecnico" class="input-campo" placeholder="Nome do Técnico">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="pressao">Pressão:</label>
+                <input type="text" id="pressao" class="input-campo" placeholder="Pressão">
+            </div>
+            <div class="form-group">
+                <label for="modelo">Modelo:</label>
+                <input type="text" id="modelo" class="input-campo" placeholder="Modelo">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="pressao">Pressão:</label>
-            <input type="text" id="pressao" class="input-campo" placeholder="Pressão">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="numero">Número:</label>
+                <input type="text" id="numero" class="input-campo" placeholder="Número">
+            </div>
+            <div class="form-group">
+                <label for="sat">SAT:</label>
+                <input type="text" id="sat" class="input-campo" placeholder="SAT">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="modelo">Modelo:</label>
-            <input type="text" id="modelo" class="input-campo" placeholder="Modelo">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="of">OF:</label>
+                <input type="text" id="of" class="input-campo" placeholder="OF">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="numero">Número:</label>
-            <input type="text" id="numero" class="input-campo" placeholder="Número">
-        </div>
-        <div class="form-group">
-            <label for="sat">SAT:</label>
-            <input type="text" id="sat" class="input-campo" placeholder="SAT">
-        </div>
-        <div class="form-group">
-            <label for="of">OF:</label>
-            <input type="text" id="of" class="input-campo" placeholder="OF">
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="classe">Escolha uma Classe:</label>
-        <select id="classe" name="classe" class="input-select" onchange="atualizarTitulo()">
-            <option value="0">Classe 1</option>
-            <option value="1">Classe 2</option>
-            <option value="2">Classe 3</option>
-            <option value="3">Classe 4</option>
-            <option value="4">Classe 5</option>
-            <option value="5">Classe 6</option>
-            <option value="6">Classe 7</option>
-            <option value="7">Classe 8</option>
-            <option value="8">Classe 9</option>
-            <option value="9">Classe 10</option>
-        </select>
     </div>
 
     <div id="campoTitulo"></div>
 
-    <button id="imprimirPdfBtn">Imprimir em PDF</button>
+    <button id="visualizarPdfBtn">Visualizar PDF</button>
+    <button id="salvarWordBtn">Salvar como Word</button>
 
     <button id="enviarDadosBtn">Enviar ao Banco de Dados</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <script>
-        const titulos = [
-            "Título da Classe 1",
-            "Título da Classe 2",
-            "Título da Classe 3",
-            "Título da Classe 4",
-            "Título da Classe 5",
-            "Título da Classe 6",
-            "Título da Classe 7",
-            "Título da Classe 8",
-            "Título da Classe 9",
-            "Título da Classe 10"
+        const titulosComSubtitulos = [
+            {
+                titulo: "1. OBJETIVO",
+                subtitulos: ["Avaliação das condições de operacionalidade da caldeira"]
+            },
+            {
+                titulo: "2. PERÍODO DA INSPEÇÃO",
+                subtitulos: ["Data da inspeção"]
+            },
+            {
+                titulo: "3. CARACTERÍSTICAS DO EQUIPAMENTO",
+                subtitulos: ["Imagem da placa da caldeira"]
+            },
+            {
+                titulo: "4. ACOMPANHARAM A INSPEÇÃO",
+                subtitulos: ["Nome e função dos participantes"]
+            },
+            {
+                titulo: "5. INSPEÇÃO E ANÁLISE DAS CONDIÇÕES FÍSICAS",
+                subtitulos: ["Análise detalhada do equipamento, acessórios e riscos potenciais"]
+            },
+
+            {
+                titulo: "5.1 - Gerador de Vapor",
+                subtitulos: ["Lado da Água", "Lado dos Gases", "Soprador de Fuligem", "Acessórios"]
+            },
+            {
+                titulo: "5.2 - Fornalha",
+                subtitulos: ["Parades Fornalha", "Fechamentos"]
+            },
+            {
+                titulo: "5.3 - Grelha Rotativa",
+                subtitulos: ["Tapete da grelha", "Sapatas e Arastadores", "Engrenagens", "Acionamento"]
+            },
+            {
+                titulo: "5.4 - Grelha Inclinada",
+                subtitulos: ["Tapete da grelha", "Escamas"]
+            },
+            {
+                titulo: "5.5 - Refratários",
+                subtitulos: ["Refratário de fechamento"]
+            },
+            {
+                titulo: "5.6 - Sistema de Ar de Combustão",
+                subtitulos: ["Ar Primário", "Ar Secundário"]
+            },
+            {
+                titulo: "5.7 - Sistema de Tiragem de Gases",
+                subtitulos: ["Filtro", "Pré-ar", "Dutos", "Dampers", "Exaustor", "Chaminé"]
+            },
+            {
+                titulo: "5.8 - Sistema de Descarga de Fundo",
+                subtitulos: ["Tubações", "Acionamento"]
+            },
+            {
+                titulo: "5.9 - Sistema de Alimentação de Água",
+                subtitulos: ["Tratamento de agua", "Bombas de alimentação"]
+            },
+            {
+                titulo: "5.10 - Tanque de Condensado",
+                subtitulos: ["Isolamento", "Lado Interno"]
+            },
+            {
+                titulo: "5.11 - Ecoterm",
+                subtitulos: ["Isolamento", "Lado Interno"]
+            },
+            {
+                titulo: "5.12 - Plataformas de Acesso",
+                subtitulos: ["Pintura"]
+            },
+            {
+                titulo: "5.13 - Sistema de Alimentação de Cavaco",
+                subtitulos: ["Silo dosador", "Acionamento", "Combustivel"]
+            },
+            {
+                titulo: "5.14 - Sistema de Alimentação Tipo Êmbolo",
+                subtitulos: ["Silo dosador", "Acionamento", "Combustivel"]
+            },
+            {
+                titulo: "5.15 - Painel Elétrico",
+                subtitulos: ["Componentes", "Instalação"]
+            },
+            {
+                titulo: "5.16 - Isolamento",
+                subtitulos: ["Fornalha" , "Gerador", "Dutos"]
+            },
+            {
+                titulo: "5.17 - Instrumentação",
+                subtitulos: ["Valvulas", "Sensor de Temperatura", "Sensor de Oxigenio"]
+            },
+            {
+                titulo: "5.18 - Pintura",
+                subtitulos: ["Dutos", "Plataformar", "Instrumentos"]
+            },
+            {
+                titulo: "5.19 - Tratamento de Água da Caldeira",
+                subtitulos: ["Incrustação e análise da água"]
+            },
+            {
+                titulo: "5.20 - Sala de Operação",
+                subtitulos: ["Avaliação da organização e procedimentos"]
+            },
+            {
+                titulo: "6. RECOMENDAÇÕES GERAIS AO CLIENTE",
+                subtitulos: ["Descrição das recomendações para eficiência e desempenho"]
+            },
+            {
+                titulo: "7. SUGESTÕES DE MELHORIAS A SER ORÇADO PELA H BREMER",
+                subtitulos: ["Detalhamento das melhorias sugeridas"]
+            },
+            {
+                titulo: "8. SUGESTÃO DE MANUTENÇÕES A SER ORÇADO PELA H BREMER",
+                subtitulos: ["Detalhamento das manutenções sugeridas"]
+            },
+            {
+                titulo: "9. CONCLUSÕES",
+                subtitulos: ["Resumo das condições gerais da caldeira", "Identificação de riscos e urgência das ações", "Desempenho da caldeira e próximos passos"]
+            }
         ];
 
-        function atualizarTitulo() {
-            const classeSelecionada = document.getElementById('classe').value;
+        function adicionarSubtitulos() {
             const campoTitulo = document.getElementById('campoTitulo');
             
-            // Criar o título para a classe selecionada
-            const divTitulo = document.createElement('div');
-            divTitulo.classList.add('form-group');
-            divTitulo.classList.add('titulo');
-            divTitulo.id = `titulo${classeSelecionada}`;
+            titulosComSubtitulos.forEach((item, index) => {
+                const divTitulo = document.createElement('div');
+                divTitulo.classList.add('form-group');
+                divTitulo.classList.add('titulo');
+                divTitulo.id = `titulo${index}`;
 
-            const label = document.createElement('label');
-            label.setAttribute('for', `titulo${classeSelecionada}`);
-            label.innerText = `Título:`;
+                const tituloLabel = document.createElement('label');
+                tituloLabel.setAttribute('for', `titulo${index}`);
+                tituloLabel.innerText = item.titulo;
 
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.id = `titulo${classeSelecionada}`;
-            input.name = `titulo${classeSelecionada}`;
-            input.value = titulos[classeSelecionada];
+                const subtituloContainer = document.createElement('div');
 
-            const gravarAudioBtn = document.createElement('button');
-            gravarAudioBtn.innerText = 'Gravar Áudio';
-            gravarAudioBtn.onclick = function() {
-                iniciarGravacao(classeSelecionada); 
-            };
+                item.subtitulos.forEach((subtitulo, subIndex) => {
+                    const divSubtitulo = document.createElement('div');
+                    divSubtitulo.classList.add('form-group');
+                    divSubtitulo.classList.add('subtitulo');
+                    divSubtitulo.id = `subtitulo${index}_${subIndex}`;
 
-            const finalizarGravacaoBtn = document.createElement('button');
-            finalizarGravacaoBtn.innerText = 'Finalizar Gravação';
-            finalizarGravacaoBtn.classList.add('botao-finalizar');
-            finalizarGravacaoBtn.onclick = function() {
-                finalizarGravacao(classeSelecionada); 
-            };
+                    const subtituloLabel = document.createElement('label');
+                    subtituloLabel.setAttribute('for', `subtitulo${index}_${subIndex}`);
+                    subtituloLabel.innerText = subtitulo;
 
-            const transcricao = document.createElement('textarea');
-            transcricao.id = `transcricao-${classeSelecionada}`;
-            transcricao.style.marginTop = '10px';
-            transcricao.value = 'Nenhum áudio gravado'; 
-            transcricao.setAttribute('rows', '3');
-            transcricao.setAttribute('placeholder', 'Edite a transcrição aqui...');
+                    const subtituloInput = document.createElement('input');
+                    subtituloInput.type = 'text';
+                    subtituloInput.id = `subtitulo${index}_${subIndex}`;
+                    subtituloInput.name = `subtitulo${index}_${subIndex}`;
 
-            const imagensLadoALado = document.createElement('div');
-            imagensLadoALado.classList.add('imagens-lado-a-lado');
+                    divSubtitulo.appendChild(subtituloLabel);
+                    divSubtitulo.appendChild(subtituloInput);
 
-            const imagem1Container = document.createElement('div');
-            imagem1Container.classList.add('imagem-container');
-            const imagem1Input = document.createElement('input');
-            imagem1Input.type = 'file';
-            imagem1Input.accept = 'image/*';
-            imagem1Input.onchange = function() {
-                previewImagem(imagem1Input, imagem1Container);
-            };
-            imagem1Container.appendChild(imagem1Input);
+                    // Adicionando os botões de gravação, transcrição e imagens para cada subtítulo
+                    const audioButtonsDiv = document.createElement('div');
+                    audioButtonsDiv.classList.add('audio-buttons');
 
-            const imagem2Container = document.createElement('div');
-            imagem2Container.classList.add('imagem-container');
-            const imagem2Input = document.createElement('input');
-            imagem2Input.type = 'file';
-            imagem2Input.accept = 'image/*';
-            imagem2Input.onchange = function() {
-                previewImagem(imagem2Input, imagem2Container);
-            };
-            imagem2Container.appendChild(imagem2Input);
+                    const gravarAudioBtn = document.createElement('button');
+                    gravarAudioBtn.innerText = 'Iniciar Gravação';
+                    gravarAudioBtn.onclick = function() {
+                        iniciarGravacao(`${index}_${subIndex}`);
+                    };
 
-            imagensLadoALado.appendChild(imagem1Container);
-            imagensLadoALado.appendChild(imagem2Container);
+                    const finalizarGravacaoBtn = document.createElement('button');
+                    finalizarGravacaoBtn.innerText = 'Finalizar Gravação';
+                    finalizarGravacaoBtn.classList.add('botao-finalizar');
+                    finalizarGravacaoBtn.onclick = function() {
+                        finalizarGravacao(`${index}_${subIndex}`);
+                    };
 
-            // Adicionando os subtítulos fixos
-            for (let i = 1; i <= 5; i++) {
-                adicionarSubtitulo(divTitulo, classeSelecionada, i); 
-            }
+                    const transcricao = document.createElement('div');
+                    transcricao.id = `transcricao-${index}_${subIndex}`;
+                    transcricao.style.marginTop = '10px';
+                    transcricao.style.padding = '10px';
+                    transcricao.style.border = '1px solid #ccc';
+                    transcricao.style.borderRadius = '4px';
+                    transcricao.innerHTML = 'A transcrição será exibida aqui...';
 
-            divTitulo.appendChild(label);
-            divTitulo.appendChild(input);
-            divTitulo.appendChild(gravarAudioBtn);
-            divTitulo.appendChild(finalizarGravacaoBtn);
-            divTitulo.appendChild(transcricao);
-            divTitulo.appendChild(imagensLadoALado);
+                    const imagensLadoALado = document.createElement('div');
+                    imagensLadoALado.classList.add('imagens-lado-a-lado');
 
-            campoTitulo.appendChild(divTitulo);
-        }
+                    const imagem1Container = document.createElement('div');
+                    imagem1Container.classList.add('imagem-container');
+                    const imagem1Input = document.createElement('input');
+                    imagem1Input.type = 'file';
+                    imagem1Input.accept = 'image/*';
+                    imagem1Input.onchange = function() {
+                        previewImagem(imagem1Input, imagem1Container);
+                    };
+                    imagem1Container.appendChild(imagem1Input);
 
-        function adicionarSubtitulo(tituloDiv, tituloIndex, subtituloIndex) {
-            const subtituloDiv = document.createElement('div');
-            subtituloDiv.classList.add('form-group');
-            subtituloDiv.classList.add('subtitulo');
+                    const imagem2Container = document.createElement('div');
+                    imagem2Container.classList.add('imagem-container');
+                    const imagem2Input = document.createElement('input');
+                    imagem2Input.type = 'file';
+                    imagem2Input.accept = 'image/*';
+                    imagem2Input.onchange = function() {
+                        previewImagem(imagem2Input, imagem2Container);
+                    };
+                    imagem2Container.appendChild(imagem2Input);
 
-            const label = document.createElement('label');
-            label.innerText = `Subtítulo ${subtituloIndex} de Título:`;
+                    imagensLadoALado.appendChild(imagem1Container);
+                    imagensLadoALado.appendChild(imagem2Container);
 
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.placeholder = `Digite o subtítulo ${subtituloIndex} aqui...`;
+                    // Adicionando os botões, transcrição e imagens ao subtítulo
+                    audioButtonsDiv.appendChild(gravarAudioBtn);
+                    audioButtonsDiv.appendChild(finalizarGravacaoBtn);
 
-            const gravarAudioBtn = document.createElement('button');
-            gravarAudioBtn.innerText = 'Gravar Áudio';
-            gravarAudioBtn.onclick = function() {
-                iniciarGravacao(`${tituloIndex}-${subtituloIndex}`); 
-            };
+                    divSubtitulo.appendChild(subtituloLabel);
+                    divSubtitulo.appendChild(subtituloInput);
+                    divSubtitulo.appendChild(audioButtonsDiv);
+                    divSubtitulo.appendChild(transcricao);
+                    divSubtitulo.appendChild(imagensLadoALado);
 
-            const finalizarGravacaoBtn = document.createElement('button');
-            finalizarGravacaoBtn.innerText = 'Finalizar Gravação';
-            finalizarGravacaoBtn.classList.add('botao-finalizar');
-            finalizarGravacaoBtn.onclick = function() {
-                finalizarGravacao(`${tituloIndex}-${subtituloIndex}`); 
-            };
+                    subtituloContainer.appendChild(divSubtitulo);
+                });
 
-            const transcricao = document.createElement('textarea');
-            transcricao.style.marginTop = '10px';
-            transcricao.value = 'Nenhum áudio gravado'; 
-            transcricao.setAttribute('rows', '3');
-            transcricao.setAttribute('placeholder', `Edite a transcrição do subtítulo ${subtituloIndex} aqui...`);
-
-            const imagensLadoALado = document.createElement('div');
-            imagensLadoALado.classList.add('imagens-lado-a-lado');
-
-            const imagem1Container = document.createElement('div');
-            imagem1Container.classList.add('imagem-container');
-            const imagem1Input = document.createElement('input');
-            imagem1Input.type = 'file';
-            imagem1Input.accept = 'image/*';
-            imagem1Input.onchange = function() {
-                previewImagem(imagem1Input, imagem1Container);
-            };
-            imagem1Container.appendChild(imagem1Input);
-
-            const imagem2Container = document.createElement('div');
-            imagem2Container.classList.add('imagem-container');
-            const imagem2Input = document.createElement('input');
-            imagem2Input.type = 'file';
-            imagem2Input.accept = 'image/*';
-            imagem2Input.onchange = function() {
-                previewImagem(imagem2Input, imagem2Container);
-            };
-            imagem2Container.appendChild(imagem2Input);
-
-            imagensLadoALado.appendChild(imagem1Container);
-            imagensLadoALado.appendChild(imagem2Container);
-
-            subtituloDiv.appendChild(label);
-            subtituloDiv.appendChild(input);
-            subtituloDiv.appendChild(gravarAudioBtn);
-            subtituloDiv.appendChild(finalizarGravacaoBtn);
-            subtituloDiv.appendChild(transcricao);
-            subtituloDiv.appendChild(imagensLadoALado);
-
-            tituloDiv.appendChild(subtituloDiv);
-        }
-
-        function iniciarGravacao(identificador) {
-            console.log("Iniciar gravação para", identificador);
-        }
-
-        function finalizarGravacao(identificador) {
-            console.log("Finalizar gravação para", identificador);
+                divTitulo.appendChild(tituloLabel);
+                divTitulo.appendChild(subtituloContainer);
+                campoTitulo.appendChild(divTitulo);
+            });
         }
 
         function previewImagem(input, container) {
+            const file = input.files[0];
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function() {
                 const img = document.createElement('img');
-                img.src = e.target.result;
+                img.src = reader.result;
                 container.appendChild(img);
             };
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(file);
         }
 
-        document.getElementById('enviarDadosBtn').addEventListener('click', function() {
-            const dados = {
-                nomeCliente: document.getElementById('nomeCliente').value,
-                nomeTecnico: document.getElementById('nomeTecnico').value,
-                pressao: document.getElementById('pressao').value,
-                modelo: document.getElementById('modelo').value,
-                numero: document.getElementById('numero').value,
-                sat: document.getElementById('sat').value,
-                of: document.getElementById('of').value,
-                classe: document.getElementById('classe').value,
-                titulos: [], // Pega os títulos do DOM
-                subtitulos: [] // Pega os subtítulos do DOM
-            };
-            
-            // Pega os títulos e subtítulos
-            for (let i = 0; i <= 9; i++) {
-                const titulo = document.getElementById(`titulo${i}`);
-                if (titulo) {
-                    dados.titulos.push(titulo.value);
-                }
+        let recognition;
+        let isRecording = false;
 
-                const subtitulos = document.querySelectorAll(`#titulo${i} .subtitulo input`);
-                subtitulos.forEach((subtituloInput) => {
-                    dados.subtitulos.push(subtituloInput.value);
-                });
+        function iniciarGravacao(identificador) {
+            if (!isRecording) {
+                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.lang = 'pt-BR';
+                recognition.interimResults = true;
+
+                recognition.onresult = function(event) {
+                    let transcricao = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcricao += event.results[i][0].transcript;
+                    }
+                    document.getElementById(`transcricao-${identificador}`).innerHTML = transcricao;
+                };
+
+                recognition.onend = function() {
+                    isRecording = false;
+                    document.getElementById(`transcricao-${identificador}`).innerHTML += ' (Gravação finalizada)';
+                };
+
+                recognition.start();
+                isRecording = true;
+                document.getElementById(`transcricao-${identificador}`).innerHTML = 'Gravando...';
+            }
+        }
+
+        function finalizarGravacao(identificador) {
+            if (isRecording) {
+                recognition.stop();
+                isRecording = false;
+                document.getElementById(`transcricao-${identificador}`).innerHTML += ' (Gravação finalizada)';
+            }
+        }
+
+        // Adicionar títulos e subtítulos ao carregar a página
+        adicionarSubtitulos();
+    
+        document.getElementById('visualizarPdfBtn').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Função para adicionar dados iniciais
+    function adicionarDadosIniciais() {
+        // Captura os dados do cliente e técnico
+        const nomeCliente = document.getElementById('nomeCliente').value;
+        const nomeTecnico = document.getElementById('nomeTecnico').value;
+        const pressao = document.getElementById('pressao').value;
+        const modelo = document.getElementById('modelo').value;
+        const numero = document.getElementById('numero').value;
+        const sat = document.getElementById('sat').value;
+        const of = document.getElementById('of').value;
+
+        doc.text('Informações do Cliente e Técnico', 10, 10);
+        doc.text('Nome do Cliente: ' + nomeCliente, 10, 20);
+        doc.text('Nome do Técnico: ' + nomeTecnico, 10, 30);
+        doc.text('Pressão: ' + pressao, 10, 40);
+        doc.text('Modelo: ' + modelo, 10, 50);
+        doc.text('Número: ' + numero, 10, 60);
+        doc.text('SAT: ' + sat, 10, 70);
+        doc.text('OF: ' + of, 10, 80);
+
+        doc.addPage(); // Adiciona a segunda página
+    }
+
+    // Função para adicionar conteúdo como título, subtítulo, transcrições e imagens
+    function adicionarConteudo(titulo, subtitulo, transcricoes, imagens) {
+        let yPosition = 10; // Inicializa a posição Y para a segunda página
+
+        // Adiciona título
+        doc.text(titulo, 10, yPosition);
+        yPosition += 10; // Espaço após o título
+
+        // Adiciona subtítulo, se houver
+        if (subtitulo) {
+            doc.text(subtitulo, 10, yPosition);
+            yPosition += 10; // Espaço após o subtítulo
+        }
+
+        // Adiciona transcrições, se houver
+        transcricoes.forEach((transcricao, index) => {
+            if (yPosition + 10 > doc.internal.pageSize.height) {  // Se ultrapassar o limite da página
+                doc.addPage(); // Cria uma nova página
+                yPosition = 10; // Reseta a posição Y
             }
 
-            fetch('http://localhost/meu-projeto/backend/processar_formulario.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dados)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert("Dados enviados com sucesso!");
-            })
-            .catch(error => {
-                console.error("Erro ao enviar os dados", error);
-            });
-        });
-    </script>
+            doc.text(`Transcrição ${index + 1}:`, 10, yPosition);
+            const textContent = transcricao.innerText;
 
+            // Quebra o texto automaticamente se exceder a largura da página
+            const splitText = doc.splitTextToSize(textContent, doc.internal.pageSize.width - 20); // Ajusta para a largura da página
+
+            // Adiciona as linhas de texto no PDF
+            splitText.forEach((line, lineIndex) => {
+                doc.text(line, 10, yPosition + 10 + (lineIndex * 10));
+            });
+
+            yPosition += splitText.length * 10 + 10; // Aumenta o espaço com base no número de linhas quebradas
+        });
+
+        // Adiciona imagens lado a lado
+        let xPosition = 10;  // Posição inicial para as imagens na horizontal
+        imagens.forEach((img, index) => {
+            if (xPosition + 90 > doc.internal.pageSize.width) {  // Se ultrapassar o limite da página
+                doc.addPage(); // Adiciona uma nova página
+                xPosition = 10; // Reseta a posição X para a nova página
+                yPosition = 10; // Reseta a posição Y para o início
+            }
+
+            // Utiliza o método addImage para adicionar a imagem no PDF
+            const imgData = img.src;
+            const imgWidth = 80; // Define uma largura para as imagens
+            const imgHeight = (img.naturalHeight / img.naturalWidth) * imgWidth; // Calcula a altura proporcional à largura
+
+            // Adiciona a imagem ao PDF
+            doc.addImage(imgData, 'PNG', xPosition, yPosition, imgWidth, imgHeight);
+
+            // Atualiza a posição X para a próxima imagem
+            xPosition += imgWidth + 10; // Deixa um espaço entre as imagens
+
+            if (index % 2 !== 0) { // Se for a segunda imagem na linha, pula para a próxima linha
+                yPosition += imgHeight + 10; // Atualiza a posição Y para a próxima linha
+                xPosition = 10; // Reseta a posição X para o início da nova linha
+            }
+        });
+    }
+
+    // Coleta os dados do título, subtítulo e transcrições
+    const campoTitulo = document.getElementById('campoTitulo');
+    const textoTitulo = campoTitulo.innerText || campoTitulo.textContent;
+    
+    const campoSubtitulo = document.getElementById('campoSubtitulo');  // Supondo que exista um campo de subtítulo
+    const textoSubtitulo = campoSubtitulo ? campoSubtitulo.innerText || campoSubtitulo.textContent : '';
+
+    const transcricoes = document.querySelectorAll('[id^="transcricao-"]');
+    const imagens = document.querySelectorAll('.imagem-container img');
+
+    // Chama a função para adicionar os dados iniciais à primeira página
+    adicionarDadosIniciais();
+
+    // Chama a função para adicionar o conteúdo (título, subtítulo, transcrições e imagens) à segunda página
+    adicionarConteudo(textoTitulo, textoSubtitulo, transcricoes, imagens);
+
+    // Exibindo o PDF em uma nova aba
+    doc.autoPrint(); // Aciona a impressão automática do PDF
+    window.open(doc.output('bloburl'), '_blank'); // Exibe o PDF em uma nova aba
+});
+
+</script>
 </body>
 </html>
