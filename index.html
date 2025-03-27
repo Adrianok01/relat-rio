@@ -6,63 +6,93 @@
     <title>Formulário com Áudio, Títulos e PDF</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #989797;
+            color: #333;
         }
 
         #formClienteTecnico {
-            margin: 20px;
+            margin: 30px auto;
+            max-width: 1200px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .form-row {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         .form-group {
+            flex: 1 1 calc(50% - 20px);
             margin-bottom: 15px;
-            flex: 1 1 48%;
         }
 
         .form-group label {
             font-weight: bold;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #444;
         }
 
         .input-campo, .input-select, .input-textarea {
             width: 100%;
-            padding: 8px;
-            margin: 5px 0;
+            padding: 12px;
+            font-size: 14px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 6px;
+            margin-top: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .input-campo:focus, .input-select:focus, .input-textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            background-color: #fff;
         }
 
         .titulo, .subtitulo {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
+            padding: 12px;
+            background-color: #c8c5c5;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
 
         .titulo input, .subtitulo input, .titulo textarea, .subtitulo textarea {
             margin-top: 10px;
             width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+
+        .titulo input:focus, .subtitulo input:focus, .titulo textarea:focus, .subtitulo textarea:focus {
+            border-color: #007bff;
+            background-color: #fff;
         }
 
         button {
-            padding: 10px 15px;
+            padding: 12px;
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
+            font-size: 16px;
             width: 100%;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
@@ -79,32 +109,36 @@
 
         .imagens-lado-a-lado {
             display: flex;
+            gap: 20px;
             flex-wrap: wrap;
-            justify-content: space-between;
-            margin-top: 10px;
+            margin-top: 20px;
         }
 
         .imagem-container {
             flex: 1;
             text-align: center;
-            max-width: 48%;
-            margin-bottom: 10px;
+            max-width: calc(50% - 20px);
+            margin-bottom: 20px;
         }
 
         .imagem-container img {
             max-width: 100%;
-            max-height: 800px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
         }
 
         #imprimirPdfBtn {
             margin-top: 20px;
-            padding: 10px 15px;
+            padding: 12px;
             background-color: #dc3545;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
         }
 
         #imprimirPdfBtn:hover {
@@ -123,16 +157,33 @@
             button {
                 width: 100%;
             }
+
+            .imagens-lado-a-lado {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
 
-        /* Alinhamento dos botões de gravação */
+        /* Estilo para os botões de áudio */
         .audio-buttons {
             display: flex;
             justify-content: space-between;
+            gap: 15px;
         }
 
         .audio-buttons button {
             width: 48%;
+            padding: 12px;
+            font-size: 14px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .audio-buttons button:hover {
+            background-color: #e0e0e0;
         }
     </style>
 </head>
@@ -495,18 +546,19 @@
 
         // Adiciona título
         doc.text(titulo, 10, yPosition);
-        yPosition += 10; // Espaço após o título
+        yPosition += 20; // Espaço após o título
 
         // Adiciona subtítulo, se houver
         if (subtitulo) {
             doc.text(subtitulo, 10, yPosition);
-            yPosition += 10; // Espaço após o subtítulo
+            yPosition += 15; // Espaço após o subtítulo
         }
 
         // Adiciona transcrições, se houver
         transcricoes.forEach((transcricao, index) => {
-            if (yPosition + 10 > doc.internal.pageSize.height) {  // Se ultrapassar o limite da página
-                doc.addPage(); // Cria uma nova página
+            // Verifica se o conteúdo está ultrapassando o limite da página
+            if (yPosition + 10 > doc.internal.pageSize.height) {
+                doc.addPage(); // Adiciona uma nova página
                 yPosition = 10; // Reseta a posição Y
             }
 
@@ -518,22 +570,34 @@
 
             // Adiciona as linhas de texto no PDF
             splitText.forEach((line, lineIndex) => {
+                if (yPosition + 10 + (lineIndex * 10) > doc.internal.pageSize.height) {
+                    doc.addPage(); // Adiciona uma nova página se necessário
+                    yPosition = 10; // Reseta a posição Y
+                }
                 doc.text(line, 10, yPosition + 10 + (lineIndex * 10));
             });
 
-            yPosition += splitText.length * 10 + 10; // Aumenta o espaço com base no número de linhas quebradas
+            // Atualiza a posição Y
+            yPosition += splitText.length * 10 + 10;
         });
 
         // Adiciona imagens lado a lado
         let xPosition = 10;  // Posição inicial para as imagens na horizontal
         imagens.forEach((img, index) => {
-            if (xPosition + 90 > doc.internal.pageSize.width) {  // Se ultrapassar o limite da página
-                doc.addPage(); // Adiciona uma nova página
-                xPosition = 10; // Reseta a posição X para a nova página
-                yPosition = 10; // Reseta a posição Y para o início
+            // Verifica se a imagem ultrapassaria o limite da página
+            if (xPosition + 90 > doc.internal.pageSize.width) {
+                xPosition = 10; // Reseta a posição X para a nova linha
+                yPosition += 90; // Move para a linha seguinte
+
+                // Se a nova linha ultrapassar a página, cria uma nova página
+                if (yPosition + 90 > doc.internal.pageSize.height) {
+                    doc.addPage();
+                    xPosition = 10;
+                    yPosition = 10; // Reseta as posições
+                }
             }
 
-            // Utiliza o método addImage para adicionar a imagem no PDF
+            // Adiciona a imagem ao PDF
             const imgData = img.src;
             const imgWidth = 80; // Define uma largura para as imagens
             const imgHeight = (img.naturalHeight / img.naturalWidth) * imgWidth; // Calcula a altura proporcional à largura
@@ -544,7 +608,8 @@
             // Atualiza a posição X para a próxima imagem
             xPosition += imgWidth + 10; // Deixa um espaço entre as imagens
 
-            if (index % 2 !== 0) { // Se for a segunda imagem na linha, pula para a próxima linha
+            // Se for a segunda imagem na linha, pula para a próxima linha
+            if (index % 2 !== 0) {
                 yPosition += imgHeight + 10; // Atualiza a posição Y para a próxima linha
                 xPosition = 10; // Reseta a posição X para o início da nova linha
             }

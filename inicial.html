@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-editar {
+            background-color: #28a745;
+        }
+
+        .btn-editar:hover {
+            background-color: #218838;
+        }
+
+        .btn-criar {
+            background-color: #ffc107;
+        }
+
+        .btn-criar:hover {
+            background-color: #e0a800;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Lista de Relatórios</h2>
+
+        <!-- Tabela de relatórios -->
+        <table id="tabela-relatorios">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Data de Criação</th>
+                    <th>Número do Equipamento</th>
+                    <th>SAT</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os dados dos relatórios serão inseridos aqui dinamicamente -->
+            </tbody>
+        </table>
+
+        <!-- Botão para criar novo relatório -->
+        <div class="actions">
+            <button class="btn btn-criar" onclick="criarNovoRelatorio()">Criar Novo Relatório</button>
+        </div>
+    </div>
+
+    <script>
+        // Exemplo de dados dos relatórios
+        const relatorios = [
+            {
+                cliente: "João Silva",
+                dataCriacao: "2025-03-25",
+                numeroEquipamento: "12345",
+                sat: "98765"
+            },
+            {
+                cliente: "Maria Oliveira",
+                dataCriacao: "2025-03-26",
+                numeroEquipamento: "54321",
+                sat: "12345"
+            },
+            {
+                cliente: "Pedro Santos",
+                dataCriacao: "2025-03-27",
+                numeroEquipamento: "67890",
+                sat: "11223"
+            }
+        ];
+
+        // Função para exibir os relatórios na tabela
+        function exibirRelatorios() {
+            const tabelaBody = document.querySelector("#tabela-relatorios tbody");
+            tabelaBody.innerHTML = ""; // Limpar conteúdo existente
+
+            relatorios.forEach((relatorio, index) => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${relatorio.cliente}</td>
+                    <td>${relatorio.dataCriacao}</td>
+                    <td>${relatorio.numeroEquipamento}</td>
+                    <td>${relatorio.sat}</td>
+                    <td>
+                        <button class="btn btn-editar" onclick="editarRelatorio(${index})">Editar</button>
+                    </td>
+                `;
+
+                tabelaBody.appendChild(row);
+            });
+        }
+
+        // Função para editar um relatório
+        function editarRelatorio(index) {
+            const relatorio = relatorios[index];
+            alert(`Editando relatório de: ${relatorio.cliente} (Equipamento: ${relatorio.numeroEquipamento})`);
+
+            // Aqui você pode abrir um formulário de edição ou redirecionar para uma página de edição
+            // Exemplo de redirecionamento
+            window.location.href = "index.html";
+        }
+
+        // Função para criar um novo relatório
+        function criarNovoRelatorio() {
+            alert("Você será redirecionado para criar um novo relatório.");
+            // Exemplo de redirecionamento para uma página de criação
+            window.location.href = "index.html";
+        }
+
+        // Chama a função para exibir os relatórios ao carregar a página
+        exibirRelatorios();
+    </script>
+
+</body>
+</html>
